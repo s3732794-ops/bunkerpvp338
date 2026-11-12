@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
         const isP1 = socket.id === room.p1.id;
         const targetSocketId = isP1 ? room.p2.id : room.p1.id;
         
+        // Зеркальные координаты (чтобы удар приходился на ту же тактическую точку у противника: бункер, окоп и т.д.)
         const mirroredX = CANVAS_W - data.x;
         const mirroredY = CANVAS_H - data.y;
 
