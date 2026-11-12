@@ -471,6 +471,7 @@
                 const card = BASE_CARDS.find(c => c.id === cardId);
                 const cardLvl = state.cardLevels[cardId];
 
+                // Разрешаем кидать войска и поддержку на свою половину/вражескую по правилам
                 if(card.type !== "Support" && card.type !== "Special Support" && clickY < CANVAS_H / 2) return;
 
                 if(energy >= card.energy) {
@@ -516,7 +517,7 @@
                     return;
                 }
 
-                // Самолёт летит строго в те координаты (x, y), куда кликнул игрок
+                // Самолёт летит строго в точные координаты (x, y) без искажений
                 const startX = x;
                 const startY = isPlayer ? CANVAS_H + 50 : -50;
                 const targetX = x;
@@ -732,7 +733,7 @@
 
                 if(e.damage <= 0) return;
 
-                // Юниты и здания корректно выбирают цели, включая вражеские здания (бункеры, окопы)
+                // Юниты и здания находят ближайших живых врагов или вражеские постройки (бункеры, окопы)
                 let targets = entities.filter(t => t.isPlayer !== e.isPlayer && t.hp > 0);
                 if(e.targetType === "Ground") targets = targets.filter(t => !t.isAir);
                 if(e.targetType === "Buildings") targets = targets.filter(t => t.isBuilding);
@@ -763,11 +764,13 @@
                             }
                         }
                     } else if(!e.isBuilding) {
+                        // Движение строго к цели (вражеским юнитам или зданиям)
                         const angle = Math.atan2(closest.y - e.y, closest.x - e.x);
                         e.x += Math.cos(angle) * e.speed * dt;
                         e.y += Math.sin(angle) * e.speed * dt;
                     }
                 } else if(!e.isBuilding) {
+                    // Если целей нет, юниты идут вперед к вражеской базе (-1 для игрока, +1 для противника)
                     e.y += (e.isPlayer ? -1 : 1) * e.speed * dt;
                 }
             });
