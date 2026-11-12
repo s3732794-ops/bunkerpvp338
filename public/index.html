@@ -464,8 +464,8 @@
             canvas.onclick = (e) => {
                 if(selectedHandIndex === null) return;
                 const rect = canvas.getBoundingClientRect();
-                const clickY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
                 const clickX = (e.clientX - rect.left) * (CANVAS_W / rect.width);
+                const clickY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
 
                 const cardId = state.deck[selectedHandIndex];
                 const card = BASE_CARDS.find(c => c.id === cardId);
@@ -516,6 +516,7 @@
                     return;
                 }
 
+                // Салёт летит прямо в точные координаты клика (x, y)
                 const startX = x;
                 const startY = isPlayer ? CANVAS_H + 50 : -50;
                 const targetX = x;
@@ -941,7 +942,7 @@
             document.getElementById('energy-fill').style.width = `${(energy / 10) * 100}%`;
             document.getElementById('energy-text').innerText = `Энергия: ${formatNum(energy)} / 10`;
             
-            const cards = document.querySelectorAll('.hand-card');
+            let cards = document.querySelectorAll('.hand-card');
             cards.forEach((c, idx) => {
                 const cardId = state.deck[idx];
                 const card = BASE_CARDS.find(x => x.id === cardId);
