@@ -52,7 +52,7 @@
         .upgrade-btn { background: #ffd700; color: #000; font-size: 10px; font-weight: bold; border: none; padding: 5px; border-radius: 5px; margin-top: 6px; width: 100%; cursor: pointer; }
 
         #game-container { position: relative; width: 380px; height: 540px; background: #1e2d1e; border: 4px solid #2e4d2e; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.7); }
-        canvas { width: 100%; height: 100%; display: block; }
+        canvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
         
         .opponent-header { position: absolute; top: 8px; left: 10px; right: 10px; display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 6px; pointer-events: none; z-index: 10; border: 1px solid rgba(255,255,255,0.1); }
 
@@ -163,13 +163,13 @@
             { id: 21, name: "Warcry", type: "Unit", rarity: "Heroic", cardIcon: "warcrycard.png", spritePlayer: "warcry.png", spriteEnemy: "enemywarcry.png", energy: 6, hp: 8820.36, damage: 266.36, speed: 2.4, hitSpeed: 1.2, range: 2.5, target: "Both" },
             { id: 22, name: "EMP", type: "Support", rarity: "Common", cardIcon: "EMP.png", spriteEffect: "img.png", effectDuration: 3.5, energy: 2, damage: 482.0, bunkerDmg: 16.0, radius: 2.5 },
             
-            // Bombing Raid (img.png отображается 2 секунды)
+            // Bombing Raid
             { id: 23, name: "Bombing Raid", type: "Support", rarity: "Rare", cardIcon: "bomb.png", energy: 3, damage: 950.0, bunkerDmg: 237.52, radius: 1.5, spritePlayer: "bomber.png", spriteEnemy: "enemy_bomber.png", baseWidth: 423, baseHeight: 234, enemyBaseWidth: 426, enemyBaseHeight: 260, spriteEffect: "img.png", effectDuration: 2.0 },
             
             // Napalm
             { id: 24, name: "Napalm", type: "Special Support", rarity: "Epic", cardIcon: "napalm.png", energy: 4, dps: 96.0, bunkerDmg: 24.0, area: "5.4 × 12 tiles", duration: 12.0, spritePlayer: "napalm_plane.png", spriteEnemy: "enemynapalm_plane.png", baseWidth: 361, baseHeight: 236, enemyBaseWidth: 366, enemyBaseHeight: 266, spriteEffect: "nplm.png", effectDuration: 12.0, sfxDeploy: "fx-napalm-deploy.ogg", sfxAttack: "fx-napalm-attack.ogg", sfxLoop: "fx-napalm-fire-loop.ogg" },
             
-            // Nuke (img.png отображается 5 секунд)
+            // Nuke
             { id: 25, name: "Nuke", type: "Support", rarity: "Epic", cardIcon: "nukecard.png", energy: 6, damage: 1800.0, bunkerDmg: 451.0, radius: 4.5, spritePlayer: "plane.png", spriteEnemy: "enemy_plane.png", baseWidth: 425, baseHeight: 325, enemyBaseWidth: 427, enemyBaseHeight: 306, spriteEffect: "img.png", effectDuration: 5.0, nukeSprite: "nuke.png", nukeWidth: 85, nukeHeight: 150, sfxDeploy: "fx-nuke-deploy.ogg", sfxAttack: "fx-nuke-attack.ogg" },
             
             // Zharenaya Yaitschnitsa
@@ -516,7 +516,7 @@
                     return;
                 }
 
-                // Салёт летит прямо в точные координаты клика (x, y)
+                // Самолёт летит строго в те координаты (x, y), куда кликнул игрок
                 const startX = x;
                 const startY = isPlayer ? CANVAS_H + 50 : -50;
                 const targetX = x;
@@ -732,6 +732,7 @@
 
                 if(e.damage <= 0) return;
 
+                // Юниты и здания корректно выбирают цели, включая вражеские здания (бункеры, окопы)
                 let targets = entities.filter(t => t.isPlayer !== e.isPlayer && t.hp > 0);
                 if(e.targetType === "Ground") targets = targets.filter(t => !t.isAir);
                 if(e.targetType === "Buildings") targets = targets.filter(t => t.isBuilding);
@@ -942,7 +943,7 @@
             document.getElementById('energy-fill').style.width = `${(energy / 10) * 100}%`;
             document.getElementById('energy-text').innerText = `Энергия: ${formatNum(energy)} / 10`;
             
-            let cards = document.querySelectorAll('.hand-card');
+            const cards = document.querySelectorAll('.hand-card');
             cards.forEach((c, idx) => {
                 const cardId = state.deck[idx];
                 const card = BASE_CARDS.find(x => x.id === cardId);
