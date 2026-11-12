@@ -163,16 +163,16 @@
             { id: 21, name: "Warcry", type: "Unit", rarity: "Heroic", cardIcon: "warcrycard.png", spritePlayer: "warcry.png", spriteEnemy: "enemywarcry.png", energy: 6, hp: 8820.36, damage: 266.36, speed: 2.4, hitSpeed: 1.2, range: 2.5, target: "Both" },
             { id: 22, name: "EMP", type: "Support", rarity: "Common", cardIcon: "EMP.png", spriteEffect: "img.png", effectDuration: 3.5, energy: 2, damage: 482.0, bunkerDmg: 16.0, radius: 2.5 },
             
-            // 23. Bombing Raid (без звука деплоя/атаки, оригинальные пропорции спрайтов)
-            { id: 23, name: "Bombing Raid", type: "Support", rarity: "Rare", cardIcon: "bomb.png", energy: 3, damage: 950.0, bunkerDmg: 237.52, radius: 1.5, spritePlayer: "bomber.png", spriteEnemy: "enemy_bomber.png", baseWidth: 423, baseHeight: 234, enemyBaseWidth: 426, enemyBaseHeight: 260, spriteEffect: "img.png", effectDuration: 1.0 },
+            // Bombing Raid (img.png отображается 2 секунды)
+            { id: 23, name: "Bombing Raid", type: "Support", rarity: "Rare", cardIcon: "bomb.png", energy: 3, damage: 950.0, bunkerDmg: 237.52, radius: 1.5, spritePlayer: "bomber.png", spriteEnemy: "enemy_bomber.png", baseWidth: 423, baseHeight: 234, enemyBaseWidth: 426, enemyBaseHeight: 260, spriteEffect: "img.png", effectDuration: 2.0 },
             
-            // 24. Napalm (Special Support со звуками и лупом огня)
-            { id: 24, name: "Napalm", type: "Special Support", rarity: "Epic", cardIcon: "napalm.png", energy: 4, dps: 96.0, bunkerDmg: 24.0, area: "5.4 × 12 tiles", duration: 12.0, spritePlayer: "napalm_plane.png", spriteEnemy: "enemynapalm_plane.png", baseWidth: 361, baseHeight: 236, enemyBaseWidth: 366, enemyBaseHeight: 266, spriteEffect: "nplm.png", sfxDeploy: "fx-napalm-deploy.ogg", sfxAttack: "fx-napalm-attack.ogg", sfxLoop: "fx-napalm-fire-loop.ogg" },
+            // Napalm
+            { id: 24, name: "Napalm", type: "Special Support", rarity: "Epic", cardIcon: "napalm.png", energy: 4, dps: 96.0, bunkerDmg: 24.0, area: "5.4 × 12 tiles", duration: 12.0, spritePlayer: "napalm_plane.png", spriteEnemy: "enemynapalm_plane.png", baseWidth: 361, baseHeight: 236, enemyBaseWidth: 366, enemyBaseHeight: 266, spriteEffect: "nplm.png", effectDuration: 12.0, sfxDeploy: "fx-napalm-deploy.ogg", sfxAttack: "fx-napalm-attack.ogg", sfxLoop: "fx-napalm-fire-loop.ogg" },
             
-            // 25. Nuke (Support с ядерной бомбой)
-            { id: 25, name: "Nuke", type: "Support", rarity: "Epic", cardIcon: "nukecard.png", energy: 6, damage: 1800.0, bunkerDmg: 451.0, radius: 4.5, spritePlayer: "plane.png", spriteEnemy: "enemy_plane.png", baseWidth: 425, baseHeight: 325, enemyBaseWidth: 427, enemyBaseHeight: 306, spriteEffect: "img.png", nukeSprite: "nuke.png", nukeWidth: 85, nukeHeight: 150, sfxDeploy: "fx-nuke-deploy.ogg", sfxAttack: "fx-nuke-attack.ogg" },
+            // Nuke (img.png отображается 5 секунд)
+            { id: 25, name: "Nuke", type: "Support", rarity: "Epic", cardIcon: "nukecard.png", energy: 6, damage: 1800.0, bunkerDmg: 451.0, radius: 4.5, spritePlayer: "plane.png", spriteEnemy: "enemy_plane.png", baseWidth: 425, baseHeight: 325, enemyBaseWidth: 427, enemyBaseHeight: 306, spriteEffect: "img.png", effectDuration: 5.0, nukeSprite: "nuke.png", nukeWidth: 85, nukeHeight: 150, sfxDeploy: "fx-nuke-deploy.ogg", sfxAttack: "fx-nuke-attack.ogg" },
             
-            // 26. Zharenaya Yaitschnitsa (Raflse редкость)
+            // Zharenaya Yaitschnitsa
             { id: 26, name: "Zharenaya Yaitschnitsa", type: "Unit", rarity: "Raflse", cardIcon: "115683.png", spritePlayer: "egg.png", spriteEnemy: "egg.png", energy: 3, hp: 500.0, damage: 5000.0, speed: 10.1, hitSpeed: 5.0, firstHit: 2.0, range: 0.3, target: "Ground" }
         ];
 
@@ -245,7 +245,6 @@
             updateUI();
         }
 
-        // Обновленные затраты на прокачку по редкостям
         function getUpgradeCost(card, lvl) {
             if (card.rarity === "Heroic") {
                 return { currency: "coins", cost: 400000 * Math.pow(2, lvl - 1) };
@@ -256,7 +255,6 @@
             } else if (card.rarity === "Raflse") {
                 return { currency: "gems", cost: 10 * Math.pow(2, lvl - 2) > 0 ? 10 * Math.pow(2, lvl - 2) : 10 };
             } else {
-                // Common
                 return { currency: "gems", cost: Math.pow(2, lvl - 2) > 0 ? Math.pow(2, lvl - 2) : 1 };
             }
         }
@@ -432,7 +430,7 @@
         let projectiles = [];
         let tracers = [];
         let supportPlanes = [];
-        let activeFires = [];
+        let spellEffects = [];
 
         const CANVAS_W = 380;
         const CANVAS_H = 540;
@@ -450,7 +448,7 @@
             projectiles = [];
             tracers = [];
             supportPlanes = [];
-            activeFires = [];
+            spellEffects = [];
             selectedHandIndex = null;
 
             createBuilding(true, "Main Bunker", "🛡️", 3749.5, 150.0, 2.0, 8.0, CANVAS_W/2, CANVAS_H - 3 * TILE_H);
@@ -589,7 +587,7 @@
         function executeSupportEffect(card, isPlayer, x, y, level) {
             if (card.sfxAttack) playSfx(card.sfxAttack);
 
-            if (card.name === "EMP" || card.name === "Bombing Raid") {
+            if (card.name === "EMP" || card.name === "Bombing Raid" || card.name === "Nuke") {
                 const dmg = getScaledStat(card.damage, level);
                 const bDmg = getScaledStat(card.bunkerDmg, level);
                 const rad = card.radius * TILE_H;
@@ -601,6 +599,15 @@
                         }
                     }
                 });
+
+                if (card.spriteEffect) {
+                    spellEffects.push({
+                        sprite: card.spriteEffect,
+                        x: x, y: y,
+                        radius: rad,
+                        durationLeft: card.effectDuration || 3.5
+                    });
+                }
             } else if (card.name === "Napalm") {
                 const dps = getScaledStat(card.dps, level);
                 const bDmg = getScaledStat(card.bunkerDmg, level);
@@ -608,27 +615,17 @@
 
                 const loopSnd = playSfx(card.sfxLoop, true);
 
-                activeFires.push({
+                spellEffects.push({
+                    sprite: card.spriteEffect,
                     x: x, y: y,
                     width: 5.4 * TILE_H,
                     height: 12 * TILE_H,
+                    isNapalm: true,
+                    durationLeft: duration,
                     dps: dps,
                     bunkerDmg: bDmg,
                     isPlayer: isPlayer,
-                    durationLeft: duration,
                     audioObj: loopSnd
-                });
-            } else if (card.name === "Nuke") {
-                const dmg = getScaledStat(card.damage, level);
-                const bDmg = getScaledStat(card.bunkerDmg, level);
-                const rad = (card.radius || 4.5) * TILE_H;
-
-                entities.forEach(e => {
-                    if(e.isPlayer !== isPlayer && e.hp > 0) {
-                        if(Math.hypot(e.x - x, e.y - y) <= rad) {
-                            e.hp -= e.isBuilding ? bDmg : dmg;
-                        }
-                    }
                 });
             }
         }
@@ -645,7 +642,7 @@
             updateEntities(dt, now);
             updateProjectiles(dt);
             updateSupportPlanes(dt);
-            updateFires(dt);
+            updateSpellEffects(dt);
             renderGame();
 
             const playerMain = entities.find(e => e.isPlayer && e.name === "Main Bunker");
@@ -704,24 +701,26 @@
             }
         }
 
-        function updateFires(dt) {
-            for (let i = activeFires.length - 1; i >= 0; i--) {
-                const fire = activeFires[i];
-                fire.durationLeft -= dt;
+        function updateSpellEffects(dt) {
+            for (let i = spellEffects.length - 1; i >= 0; i--) {
+                const se = spellEffects[i];
+                se.durationLeft -= dt;
 
-                entities.forEach(e => {
-                    if (e.isPlayer !== fire.isPlayer && e.hp > 0) {
-                        if (Math.abs(e.x - fire.x) <= fire.width / 2 && Math.abs(e.y - fire.y) <= fire.height / 2) {
-                            e.hp -= (e.isBuilding ? fire.bunkerDmg : fire.dps) * dt;
+                if (se.isNapalm) {
+                    entities.forEach(e => {
+                        if (e.isPlayer !== se.isPlayer && e.hp > 0) {
+                            if (Math.abs(e.x - se.x) <= se.width / 2 && Math.abs(e.y - se.y) <= se.height / 2) {
+                                e.hp -= (e.isBuilding ? se.bunkerDmg : se.dps) * dt;
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
-                if (fire.durationLeft <= 0) {
-                    if (fire.audioObj) {
-                        fire.audioObj.pause();
+                if (se.durationLeft <= 0) {
+                    if (se.audioObj) {
+                        se.audioObj.pause();
                     }
-                    activeFires.splice(i, 1);
+                    spellEffects.splice(i, 1);
                 }
             }
         }
@@ -845,13 +844,24 @@
                 ctx.stroke();
             });
 
-            activeFires.forEach(f => {
-                const img = loadedImages["nplm.png"];
-                if (img && img.complete) {
-                    ctx.drawImage(img, f.x - f.width/2, f.y - f.height/2, f.width, f.height);
+            spellEffects.forEach(se => {
+                const img = loadedImages[se.sprite];
+                if (se.isNapalm) {
+                    if (img && img.complete) {
+                        ctx.drawImage(img, se.x - se.width/2, se.y - se.height/2, se.width, se.height);
+                    } else {
+                        ctx.fillStyle = 'rgba(255, 87, 34, 0.4)';
+                        ctx.fillRect(se.x - se.width/2, se.y - se.height/2, se.width, se.height);
+                    }
                 } else {
-                    ctx.fillStyle = 'rgba(255, 87, 34, 0.4)';
-                    ctx.fillRect(f.x - f.width/2, f.y - f.height/2, f.width, f.height);
+                    if (img && img.complete) {
+                        ctx.drawImage(img, se.x - se.radius, se.y - se.radius, se.radius * 2, se.radius * 2);
+                    } else {
+                        ctx.fillStyle = 'rgba(0, 229, 255, 0.3)';
+                        ctx.beginPath();
+                        ctx.arc(se.x, se.y, se.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
             });
 
@@ -902,7 +912,6 @@
                 ctx.fillText(`${formatNum(e.hp)}`, e.x, barY - 6);
             });
 
-            // Отрисовка самолетов поддержки в пропорциях оригинальных размеров, но масштабом в 2 раза крупнее обычных юнитов
             supportPlanes.forEach(p => {
                 if (p.isNukeBomb) {
                     const nukeImg = loadedImages["nuke.png"];
@@ -914,7 +923,6 @@
                 } else if (p.sprite) {
                     const img = loadedImages[p.sprite];
                     const scaleFactor = 2.0;
-                    // Сохраняем исходные пропорции ширины и высоты из оригинальных пикселей
                     const w = p.baseWidth * 0.12 * scaleFactor;
                     const h = p.baseHeight * 0.12 * scaleFactor;
                     if (img && img.complete) {
