@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
         const isP1 = socket.id === room.p1.id;
         const targetSocketId = isP1 ? room.p2.id : room.p1.id;
         
-        // Зеркалирование координат для противника
+        // Корректное зеркалирование координат: X инвертируется по ширине, Y инвертируется по высоте холста
         const mirroredX = CANVAS_W - data.x;
         const mirroredY = CANVAS_H - data.y;
 
